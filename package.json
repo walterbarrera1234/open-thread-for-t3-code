@@ -1,0 +1,108 @@
+{
+  "name": "open-thread-for-t3-code",
+  "displayName": "Open Thread for T3 Code",
+  "description": "Right-click any folder in VS Code, Cursor, Windsurf or Antigravity to start a new T3 Code thread for it.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "t3",
+    "t3 code",
+    "ai",
+    "agent",
+    "threads"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "t3code.openFolder",
+        "title": "Open Thread",
+        "category": "T3 Code"
+      },
+      {
+        "command": "t3code.openWorkspace",
+        "title": "Open Thread for Current Project",
+        "category": "T3 Code"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "t3code.openWorkspace",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t",
+        "when": "workspaceFolderCount > 0"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "t3code.openFolder",
+          "when": "explorerResourceIsFolder && resourceScheme == file",
+          "group": "navigation@99"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "t3code.openFolder",
+          "when": "false"
+        },
+        {
+          "command": "t3code.openWorkspace",
+          "when": "workspaceFolderCount > 0"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "T3 Code",
+      "properties": {
+        "t3code.homeDir": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "T3 Code data directory. Leave empty to use `$T3CODE_HOME` or `~/.t3`."
+        },
+        "t3code.appPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to the T3 Code desktop app, used to launch it when it isn't running. Leave empty to auto-detect."
+        },
+        "t3code.launchIfNotRunning": {
+          "type": "boolean",
+          "default": true,
+          "description": "Launch the T3 Code desktop app if it isn't running."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run compile",
+    "test": "npm run compile && node --test out/test/t3Bridge.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/walterbarrera1234/open-thread-for-t3-code.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walterbarrera1234/open-thread-for-t3-code/issues"
+  },
+  "homepage": "https://github.com/walterbarrera1234/open-thread-for-t3-code#readme"
+}
