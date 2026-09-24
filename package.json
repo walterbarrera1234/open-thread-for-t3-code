@@ -3,7 +3,7 @@
   "displayName": "Open Thread for T3 Code",
   "description": "Right-click any folder in VS Code, Cursor, Windsurf or Antigravity to start a new T3 Code thread for it.",
   "version": "0.1.0",
-  "publisher": "local",
+  "publisher": "ezequielbarrera",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
