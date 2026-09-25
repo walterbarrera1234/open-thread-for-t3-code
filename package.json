@@ -1,8 +1,8 @@
 {
   "name": "open-thread-for-t3-code",
   "displayName": "Open Thread for T3 Code",
-  "description": "Right-click any folder to start a T3 Code thread for it, and see which agents are working in which repos, live in VS Code, Cursor, Windsurf or Antigravity.",
-  "version": "0.2.0",
+  "description": "Right-click any folder to start a T3 Code thread, see which agents are working in which repos, and use T3 Code in a panel beside your code. For VS Code, Cursor, Windsurf and Antigravity.",
+  "version": "0.3.0",
   "publisher": "ezequielbarrera",
   "license": "MIT",
   "engines": {
@@ -63,6 +63,12 @@
         "title": "Open Folder in New Window",
         "category": "T3 Code",
         "icon": "$(folder-opened)"
+      },
+      {
+        "command": "t3code.openPanel",
+        "title": "Open T3 Code Panel",
+        "category": "T3 Code",
+        "icon": "$(layout-sidebar-right)"
       }
     ],
     "keybindings": [
@@ -100,6 +106,11 @@
         }
       ],
       "view/title": [
+        {
+          "command": "t3code.openPanel",
+          "when": "view == t3code.agents",
+          "group": "navigation@0"
+        },
         {
           "command": "t3code.refreshAgents",
           "when": "view == t3code.agents",

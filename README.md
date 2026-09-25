@@ -17,6 +17,23 @@ While T3 Code agents work, the extension shows what's happening across all your 
 - **Status bar.** Shows e.g. "3 working · 1 needs you" while agents are active (hidden when all are idle), highlighted when one needs you. Click it to open the panel.
 - **Notifications** when an agent finishes, needs you, or hits an error. Set `t3code.agents.notifications` to `needsYou` or `off` to quiet them. Only the focused VS Code window notifies.
 
+## T3 Code inside VS Code
+
+Run **T3 Code: Open T3 Code Panel** (or click the panel button at the top of the T3 Agents view) to open T3 Code's own interface in a tab beside your code: your threads, chats, approvals, and diffs, without switching apps. Drag the tab into the secondary side bar if you want it docked on the right; VS Code remembers where you put it. The T3 Code desktop app must be running.
+
+The panel shows T3 Code's web interface, so desktop-only features aren't available in it: the in-app browser preview, the native folder picker, "open in editor" buttons, WSL/SSH environments, and native context menus. Use the desktop app for those. While the panel has focus, keyboard shortcuts go to T3 Code rather than VS Code.
+
+**Sign-in.** The first time you open the panel, the extension uses the CLI bundled with T3 Code (`t3 auth session issue`) to create a token labeled "VS Code panel (Open Thread for T3 Code)", valid for 30 days, and keeps it in VS Code's secret storage. It's renewed automatically when it expires. You can revoke it from T3 Code's settings at any time.
+
+**Security.** T3 Code signs browsers in with a cookie that an embedded page can't use, so the panel loads T3 Code through a small relay inside the extension that adds the token to each request. The page never sees the token. Because a signed-in relay could otherwise be abused, it:
+
+- listens only on `127.0.0.1`, on a random port;
+- answers only requests addressed to exactly that address, which blocks DNS rebinding;
+- rejects any request whose browser-set `Origin` isn't its own, which blocks websites (including their WebSocket attempts);
+- requires a random per-launch key on every request: the panel's entry URL carries it, and a cookie scoped to the relay returns it on every later request and the WebSocket.
+
+The relay stops when the panel closes.
+
 Agent status is read, read-only, from T3 Code's local database (`<T3 home>/userdata/state.sqlite`) every 2 seconds. That database is internal to T3 Code; if a T3 Code update changes it, the agent views show "not available" and **Open Thread** keeps working.
 
 ## Platform support

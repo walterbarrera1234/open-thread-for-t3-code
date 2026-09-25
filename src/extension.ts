@@ -14,6 +14,7 @@ import {
 } from "./t3Bridge";
 import { registerAgentViews } from "./agents";
 import { stateDbPath } from "./t3State";
+import { registerPanel } from "./panel";
 
 const RUNNING_APP_GRACE_MS = 5_000;
 
@@ -38,6 +39,11 @@ export function activate(context: vscode.ExtensionContext) {
   registerAgentViews(context, {
     dbPath: () => stateDbPath(resolveBaseDir(vscode.workspace.getConfiguration("t3code").get<string>("homeDir"))),
     openThread: openOne,
+    showApp,
+  });
+  registerPanel(context, {
+    baseDir: () => resolveBaseDir(vscode.workspace.getConfiguration("t3code").get<string>("homeDir")),
+    appPath: () => vscode.workspace.getConfiguration("t3code").get<string>("appPath")?.trim() || detectAppPath(),
     showApp,
   });
 }

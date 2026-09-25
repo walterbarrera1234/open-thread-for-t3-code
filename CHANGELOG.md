@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- **T3 Code panel**: open T3 Code's own interface in a tab beside your code (**T3 Code: Open T3 Code Panel**, or the button on the T3 Agents view). Signs in automatically with a token from T3 Code's bundled CLI, stored in VS Code's secret storage, through a locked-down loopback relay. Desktop-only T3 Code features aren't available in the panel.
+
 ## 0.2.0
 
 - **Live agent status** from T3 Code, across all your repos:
