@@ -12,6 +12,8 @@ import {
   sendOpenWorkspaceWhenReady,
   type OpenWorkspaceResponse,
 } from "./t3Bridge";
+import { registerAgentViews } from "./agents";
+import { stateDbPath } from "./t3State";
 
 const RUNNING_APP_GRACE_MS = 5_000;
 
@@ -31,7 +33,13 @@ export function activate(context: vscode.ExtensionContext) {
       return openInT3(targets);
     }),
     vscode.commands.registerCommand("t3code.openWorkspace", openWorkspaceFolder),
+    vscode.commands.registerCommand("t3code.showApp", showApp),
   );
+  registerAgentViews(context, {
+    dbPath: () => stateDbPath(resolveBaseDir(vscode.workspace.getConfiguration("t3code").get<string>("homeDir"))),
+    openThread: openOne,
+    showApp,
+  });
 }
 
 export function deactivate() {}
@@ -125,6 +133,20 @@ async function tryLaunch(config: vscode.WorkspaceConfiguration): Promise<boolean
     return true;
   } catch (error) {
     return promptForAppPath(`T3 Code isn't running and couldn't be started (${error instanceof Error ? error.message : String(error)}).`);
+  }
+}
+
+/** Brings T3 Code to the front; launching a running app just focuses its window. */
+async function showApp() {
+  const appPath = vscode.workspace.getConfiguration("t3code").get<string>("appPath")?.trim() || detectAppPath();
+  if (!appPath && !canLaunchWithoutPath()) {
+    await promptForAppPath("The T3 Code desktop app couldn't be found.");
+    return;
+  }
+  try {
+    await launchApp(appPath);
+  } catch (error) {
+    await promptForAppPath(`T3 Code couldn't be opened (${error instanceof Error ? error.message : String(error)}).`);
   }
 }
 

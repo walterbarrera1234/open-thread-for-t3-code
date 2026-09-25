@@ -1,8 +1,8 @@
 {
   "name": "open-thread-for-t3-code",
   "displayName": "Open Thread for T3 Code",
-  "description": "Right-click any folder in VS Code, Cursor, Windsurf or Antigravity to start a new T3 Code thread for it.",
-  "version": "0.1.0",
+  "description": "Right-click any folder to start a T3 Code thread for it, and see which agents are working in which repos, live in VS Code, Cursor, Windsurf or Antigravity.",
+  "version": "0.2.0",
   "publisher": "ezequielbarrera",
   "license": "MIT",
   "engines": {
@@ -16,13 +16,18 @@
     "t3 code",
     "ai",
     "agent",
-    "threads"
+    "threads",
+    "agents",
+    "multi-agent",
+    "dashboard"
   ],
   "extensionKind": [
     "ui"
   ],
   "main": "./out/extension.js",
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
     "commands": [
       {
@@ -34,6 +39,30 @@
         "command": "t3code.openWorkspace",
         "title": "Open Thread for Current Project",
         "category": "T3 Code"
+      },
+      {
+        "command": "t3code.showApp",
+        "title": "Show in T3 Code",
+        "category": "T3 Code",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "t3code.refreshAgents",
+        "title": "Refresh Agents",
+        "category": "T3 Code",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "t3code.openThreadInProject",
+        "title": "Open New Thread",
+        "category": "T3 Code",
+        "icon": "$(add)"
+      },
+      {
+        "command": "t3code.openProjectFolder",
+        "title": "Open Folder in New Window",
+        "category": "T3 Code",
+        "icon": "$(folder-opened)"
       }
     ],
     "keybindings": [
@@ -60,6 +89,43 @@
         {
           "command": "t3code.openWorkspace",
           "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "t3code.openThreadInProject",
+          "when": "false"
+        },
+        {
+          "command": "t3code.openProjectFolder",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "t3code.refreshAgents",
+          "when": "view == t3code.agents",
+          "group": "navigation"
+        },
+        {
+          "command": "t3code.showApp",
+          "when": "view == t3code.agents",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "t3code.openThreadInProject",
+          "when": "view == t3code.agents && viewItem == t3Project",
+          "group": "inline@1"
+        },
+        {
+          "command": "t3code.openProjectFolder",
+          "when": "view == t3code.agents && viewItem == t3Project",
+          "group": "inline@2"
+        },
+        {
+          "command": "t3code.showApp",
+          "when": "view == t3code.agents && viewItem == t3Thread",
+          "group": "inline"
         }
       ]
     },
@@ -80,16 +146,66 @@
           "type": "boolean",
           "default": true,
           "description": "Launch the T3 Code desktop app if it isn't running."
+        },
+        "t3code.agents.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show live T3 Code agent status: Explorer badges, the T3 Agents panel, and the status bar. Takes effect after reloading the window."
+        },
+        "t3code.agents.notifications": {
+          "type": "string",
+          "enum": [
+            "all",
+            "needsYou",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Notify when an agent finishes, needs you, or hits an error.",
+            "Only notify when an agent needs you or hits an error.",
+            "No notifications."
+          ],
+          "default": "all",
+          "description": "When to show notifications about T3 Code agents."
         }
       }
-    }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "t3code",
+          "title": "T3 Agents",
+          "icon": "resources/agents.svg"
+        }
+      ]
+    },
+    "views": {
+      "t3code": [
+        {
+          "id": "t3code.agents",
+          "name": "Agents",
+          "when": "t3code.agentsEnabled"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "t3code.agents",
+        "when": "!t3code.agentsAvailable",
+        "contents": "Agent status isn't available yet. Make sure the T3 Code desktop app is installed and has been opened at least once.\n[Refresh](command:t3code.refreshAgents)"
+      },
+      {
+        "view": "t3code.agents",
+        "when": "t3code.agentsAvailable && t3code.agentsEmpty",
+        "contents": "No T3 Code threads yet. Right-click a folder in the Explorer and choose **Open Thread** to start one."
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "package": "vsce package",
     "vscode:prepublish": "npm run compile",
-    "test": "npm run compile && node --test out/test/t3Bridge.test.js"
+    "test": "npm run compile && node --test \"out/test/*.test.js\""
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

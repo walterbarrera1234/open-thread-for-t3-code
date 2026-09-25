@@ -8,6 +8,17 @@ Each run opens a new thread in the folder's project. If the previous new thread 
 
 > Unofficial community extension, not affiliated with T3 Tools. Requires the [T3 Code desktop app](https://github.com/pingdotgg/t3code/releases).
 
+## See your agents
+
+While T3 Code agents work, the extension shows what's happening across all your repos, live:
+
+- **Explorer badges.** A project folder with agents working gets a badge with the count; `!` means an agent is waiting on you and `×` means one failed. Hover for details, e.g. "T3 Code: 2 working · 1 needs you".
+- **T3 Agents panel.** The activity bar icon opens every T3 Code project with its threads and a status for each: working, needs you, error, or done. Use the inline buttons to open a new thread in a project or open its folder in a new window. Clicking a thread brings T3 Code to the front.
+- **Status bar.** Shows e.g. "3 working · 1 needs you" while agents are active (hidden when all are idle), highlighted when one needs you. Click it to open the panel.
+- **Notifications** when an agent finishes, needs you, or hits an error. Set `t3code.agents.notifications` to `needsYou` or `off` to quiet them. Only the focused VS Code window notifies.
+
+Agent status is read, read-only, from T3 Code's local database (`<T3 home>/userdata/state.sqlite`) every 2 seconds. That database is internal to T3 Code; if a T3 Code update changes it, the agent views show "not available" and **Open Thread** keeps working.
+
 ## Platform support
 
 | OS | Auto-launch when T3 Code isn't running |
@@ -42,6 +53,8 @@ If the app isn't running, the extension launches it and retries for up to 60 sec
 | `t3code.homeDir` | `$T3CODE_HOME` or `~/.t3` | T3 Code data directory (determines the socket name). |
 | `t3code.appPath` | auto-detect | Desktop app executable used for auto-launch. |
 | `t3code.launchIfNotRunning` | `true` | Launch T3 Code if it isn't running. |
+| `t3code.agents.enabled` | `true` | Show agent badges, the T3 Agents panel, and the status bar item. |
+| `t3code.agents.notifications` | `all` | `all`, `needsYou` (needs you or errors only), or `off`. |
 
 ## Develop
 
@@ -49,7 +62,8 @@ If the app isn't running, the extension launches it and retries for up to 60 sec
 npm install
 npm run compile      # or: npm run watch, then F5 in VS Code
 npm run package      # builds open-thread-for-t3-code-<version>.vsix
-code --install-extension open-thread-for-t3-code-0.1.0.vsix
+code --install-extension open-thread-for-t3-code-<version>.vsix
+npm test             # Node 22.13+ (tests use node:sqlite)
 ```
 
 Limitation: local folders only. Folders from Remote-SSH/WSL/containers are rejected, since T3 Code's local environment can't map those paths.
